@@ -24,6 +24,10 @@ namespace Student_Management_API
             // Register Sevices
             // StudentService
             builder.Services.AddScoped<IStudentService, StudentService>();
+            // Course Service
+            builder.Services.AddScoped<ICourseService, CourseService>();
+            //EnrollmentService
+            builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 
             var app = builder.Build();
 

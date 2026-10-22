@@ -97,7 +97,7 @@ namespace Student_Management_API.Services
         // Get Student by name (partial match, not an exact match)
         public async Task<List<StudentResponse>> GetStudentByName(string name)
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new Exception("Please Enter the Name!");
 
             List<StudentResponse> responses = await db.Students.Where(s => s.FullName.Contains(name)).AsNoTracking()

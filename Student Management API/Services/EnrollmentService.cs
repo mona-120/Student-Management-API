@@ -1,6 +1,7 @@
 ﻿namespace Student_Management_API.Services
 {
-    public class EnrollmentService
+    public class EnrollmentService : IEnrollmentService 
     {
+
     }
 }
