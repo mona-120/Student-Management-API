@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Student_Management_API.Data;
+using Student_Management_API.Services;
 
 namespace Student_Management_API
 {
@@ -19,6 +20,10 @@ namespace Student_Management_API
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<AppDbContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("StudentDb")));
+
+            // Register Sevices
+            // StudentService
+            builder.Services.AddScoped<IStudentService, StudentService>();
 
             var app = builder.Build();
 

@@ -1,25 +1,24 @@
-﻿using Student_Management_API.Common;
-using Student_Management_API.Data;
+﻿using Student_Management_API.Data;
 using Student_Management_API.Dtos;
 using Student_Management_API.Entities;
 using Microsoft.EntityFrameworkCore;
 namespace Student_Management_API.Services
 {
-    public class StudentService
+    public class StudentService : IStudentService
     {
-        AppDbContext db;
+        private readonly AppDbContext db;
         public StudentService(AppDbContext db)
         {
             this.db = db;
         }
 
         // Add new student
-        public async Task<ServiceResponse<StudentResponse>> AddStudent(StudentRequest studentRequest)
+        public async Task<StudentResponse> AddStudent(StudentRequest studentRequest)
         {
             if (await db.Students.AnyAsync(s => s.Email == studentRequest.Email))
-                return new ServiceResponse<StudentResponse>(false,"Email Already Exist!",null);
+                throw new Exception("Email Already Exist!");
             if (studentRequest.DateOfBirth != null && studentRequest.DateOfBirth >= DateOnly.FromDateTime(DateTime.Now))
-                return new ServiceResponse<StudentResponse>(false, "Invalid Date Of birth,It mustn't be in the future!", null);
+                throw new Exception("Invalid Date Of birth,It mustn't be in the future!");
 
             Student student = new Student();
             student.FullName = studentRequest.FullName;
@@ -36,32 +35,32 @@ namespace Student_Management_API.Services
             response.Email = student.Email;
             response.EnrollmentDate = student.EnrollmentDate;
 
-            return new ServiceResponse<StudentResponse>(true, $"Student {studentRequest.FullName} Added Successfully!", response);
+            return response;
         }
 
 
         // Update Student Info
-        public async Task<ServiceResponse<StudentResponse>> UpdateStudentInfo(int id ,StudentRequest studentRequest)
+        public async Task<StudentResponse> UpdateStudentInfo(int id ,StudentRequest studentRequest)
         {
             Student? student = await db.Students.FirstOrDefaultAsync(s=> s.StudentId == id);
             if (student == null)
-                return new ServiceResponse<StudentResponse>(false, "Student Doesn't Exist!", null);
+                throw new Exception("Student Doesn't Exist!");
 
-            if(studentRequest.FullName != student.FullName)
+            if (studentRequest.FullName != student.FullName)
             {
                 student.FullName = studentRequest.FullName;
             }
             if(studentRequest.Email != student.Email)
             {
                 if (await db.Students.AnyAsync(s => s.Email == studentRequest.Email))
-                    return new ServiceResponse<StudentResponse>(false, "Email Already Exist!", null);
+                    throw new Exception("Email Already Exist!");
 
                 student.Email = studentRequest.Email;
             }
             if(studentRequest.DateOfBirth != null && studentRequest.DateOfBirth != student.DateOfBirth)
             {
                 if (studentRequest.DateOfBirth >= DateOnly.FromDateTime(DateTime.Now))
-                    return new ServiceResponse<StudentResponse>(false, "Invalid Date Of birth,It mustn't be in the future!", null);
+                    throw new Exception("Invalid Date Of birth,It mustn't be in the future!");
 
                 student.DateOfBirth = studentRequest.DateOfBirth;
             }
@@ -74,16 +73,16 @@ namespace Student_Management_API.Services
             response.Email = student.Email;
             response.DateOfBirth = student.DateOfBirth;
             response.EnrollmentDate = student.EnrollmentDate;
-            return new ServiceResponse<StudentResponse>(true, $"Student {studentRequest.FullName} Updated Successfully!", response);
+            return response;
         }
 
 
         // Get Student by Id
-        public async Task<ServiceResponse<StudentResponse>> GetStudentById(int id)
+        public async Task<StudentResponse> GetStudentById(int id)
         {
             Student? student = await db.Students.AsNoTracking().FirstOrDefaultAsync(s => s.StudentId == id);
             if (student == null)
-                return new ServiceResponse<StudentResponse>(false, "Student Doesn't Exist!", null);
+                throw new Exception("Student Doesn't Exist!");
 
             StudentResponse response = new StudentResponse();
             response.StudentId = student.StudentId;
@@ -91,15 +90,15 @@ namespace Student_Management_API.Services
             response.Email = student.Email;
             response.DateOfBirth = student.DateOfBirth;
             response.EnrollmentDate = student.EnrollmentDate;
-            return new ServiceResponse<StudentResponse>(true, $"Student {response.FullName} Found!", response);
+            return response;
         }
 
 
         // Get Student by name (partial match, not an exact match)
-        public async Task<ServiceResponse<List<StudentResponse>>> GetStudentByName(string name)
+        public async Task<List<StudentResponse>> GetStudentByName(string name)
         {
             if (string.IsNullOrEmpty(name))
-                return new ServiceResponse<List<StudentResponse>>(false, "Please Enter the Name!", null);
+                throw new Exception("Please Enter the Name!");
 
             List<StudentResponse> responses = await db.Students.Where(s => s.FullName.Contains(name)).AsNoTracking()
                 .Select(response => new StudentResponse
@@ -112,14 +111,14 @@ namespace Student_Management_API.Services
                 }).ToListAsync();
 
             if (responses.Count == 0)
-                return new ServiceResponse<List<StudentResponse>>(false, "Student Doesn't Exist!", null);
+                return [];
 
-            return new ServiceResponse<List<StudentResponse>>(true, $"Found a Students with matched name {name}", responses);
+            return responses;
         }
 
 
         // Get All Students
-        public async Task<ServiceResponse<List<StudentResponse>>> GetAllStudents()
+        public async Task<List<StudentResponse>> GetAllStudents()
         {
             List<StudentResponse> responses = await db.Students.AsNoTracking()
                 .Select(response => new StudentResponse
@@ -132,18 +131,18 @@ namespace Student_Management_API.Services
                 }).ToListAsync();
 
             if (responses.Count == 0)
-                return new ServiceResponse<List<StudentResponse>>(false, "System Doesn't Contain Students", null);
+                return [];
 
-            return new ServiceResponse<List<StudentResponse>>(true, "Student List Retrived Successfully", responses);
+            return responses;
         }
 
 
         // Delete a student
-        public async Task<ServiceResponse<StudentResponse>> DeleteStudent(int id)
+        public async Task<StudentResponse> DeleteStudent(int id)
         {
             Student? student = await db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
             if (student == null)
-                return new ServiceResponse<StudentResponse>(false, "Student Doesn't Exist!", null);
+                throw new Exception("Student Doesn't Exist!");
 
             StudentResponse response = new StudentResponse();
             response.StudentId = student.StudentId;
@@ -154,7 +153,7 @@ namespace Student_Management_API.Services
 
             db.Students.Remove(student);
             await db.SaveChangesAsync();
-            return new ServiceResponse<StudentResponse>(true, $"Student {student.FullName} Deleted Successfully!", response);
+            return  response;
         }
 
     }
