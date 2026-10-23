@@ -33,6 +33,7 @@ The system allows to:
 
 ## 📂 Project Structure
 
+```text
 StudentManagementAPI/
 │
 ├── Controllers/
