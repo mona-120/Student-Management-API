@@ -20,15 +20,8 @@ namespace Student_Management_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllEnrollments()
         {
-            try
-            {
                 var enrollments = await _enrollmentService.GetAllEnrollments();
                 return Ok(enrollments);
-            }
-            catch(Exception ex) 
-            {
-                return BadRequest(ex.Message);
-            }
         }
 
         [HttpGet("course/{courseId:int}")]
@@ -43,7 +36,6 @@ namespace Student_Management_API.Controllers
             {
                 if (ex.Message == "Course Doesn't Exist!")
                     return NotFound(ex.Message);
-                return BadRequest(ex.Message);
             }
         }
 
@@ -59,7 +51,6 @@ namespace Student_Management_API.Controllers
             {
                 if (ex.Message == "Student Doesn't Exist!")
                     return NotFound(ex.Message);
-                return BadRequest(ex.Message);
             }
         }
 
@@ -83,12 +74,14 @@ namespace Student_Management_API.Controllers
             try
             {
                 Enrollment enrollmnet = await _enrollmentService.AddEnrollment(request);
-                return Ok(enrollmnet);
+                return Created();
             }
             catch(Exception ex)
             {
                 if (ex.Message == "Course Doesn't Exist!" || ex.Message == "Student Doesn't Exist!")
                     return NotFound(ex.Message);
+                if (ex.Message == "Enrollment Already Exist!")
+                    return Conflict(ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -123,7 +116,6 @@ namespace Student_Management_API.Controllers
             {
                 if (ex.Message == "Enrollment Doesn't Exist")
                     return NotFound(ex.Message);
-                return BadRequest(ex.Message);
             }
         }
     }

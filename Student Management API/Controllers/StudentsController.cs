@@ -18,15 +18,8 @@ namespace Student_Management_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllStudents()
         {
-            try
-            {
                 var students = await _studentService.GetAllStudents();
                 return Ok(students);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
 
         [HttpGet("{id:int}")]
@@ -43,8 +36,8 @@ namespace Student_Management_API.Controllers
             }
         }
 
-        [HttpGet("{name:alpha}")]
-        public async Task<IActionResult> GetStudentByName(string name)
+        [HttpGet("search")]
+        public async Task<IActionResult> GetStudentByName([FromQuery]string name)
         {
             try
             {
@@ -53,10 +46,7 @@ namespace Student_Management_API.Controllers
             }
             catch (Exception ex)
             {
-                if(ex.Message == "Student Doesn't Exist")
                     return NotFound(ex.Message);
-
-                return BadRequest(ex.Message);
             }
         }
 
@@ -66,10 +56,12 @@ namespace Student_Management_API.Controllers
             try
             {
                 StudentResponse response =  await _studentService.AddStudent(student);
-                return Ok(response);
+                return Created();
             }
             catch (Exception ex)
             {
+                if (ex.Message == "Email Already Exist!")
+                    return Conflict(ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -86,6 +78,8 @@ namespace Student_Management_API.Controllers
             {
                 if (ex.Message == "Student Doesn't Exist!")
                     return NotFound(ex.Message);
+                if (ex.Message == "Email Already Exist!")
+                    return Conflict(ex.Message);
                 return BadRequest(ex.Message);
             }
         }

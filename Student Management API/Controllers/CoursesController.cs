@@ -18,15 +18,8 @@ namespace Student_Management_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCourses()
         {
-            try
-            {
                 var courses = await _courseService.GetAllCourses();
                 return Ok(courses);
-            }
-            catch(Exception ex) 
-            {
-                return BadRequest(ex.Message);
-            }
         }
 
         [HttpGet("{id:int}")]
@@ -41,12 +34,11 @@ namespace Student_Management_API.Controllers
             {
                if(ex.Message == "Course not Exist!")
                     return NotFound(ex.Message);
-               return BadRequest(ex.Message);
             }
         }
 
-        [HttpGet("{title:alpha}")]
-        public async Task<IActionResult> GetCourseByTitle(string title)
+        [HttpGet("search")]
+        public async Task<IActionResult> GetCourseByTitle([FromQuery]string title)
         {
             try
             {
@@ -57,7 +49,6 @@ namespace Student_Management_API.Controllers
             {
                 if (ex.Message == "Course Doesn't Exist")
                     return NotFound(ex.Message);
-                return BadRequest(ex.Message);
             }
         }
 
@@ -67,10 +58,12 @@ namespace Student_Management_API.Controllers
             try
             {
                 var course = await _courseService.AddCourse(request);
-                return Ok(course);
+                return Created();
             }
             catch(Exception ex)
             {
+                if (ex.Message == "Course Already Exist!")
+                    return Conflict();
                 return BadRequest(ex.Message);
             }
         }
@@ -87,6 +80,8 @@ namespace Student_Management_API.Controllers
             {
                 if (ex.Message == "Course Doesn't Exist!")
                     return NotFound(ex.Message);
+                if (ex.Message == "Course Already Exist!")
+                    return Conflict();
                 return BadRequest(ex.Message);
             }
         }
@@ -104,8 +99,7 @@ namespace Student_Management_API.Controllers
             {
                 if (ex.Message == "Course Doesn't Exist!")
                     return NotFound(ex.Message);
-                
-                return BadRequest(ex.Message);
+                return Conflict(ex.Message);
             }
         }
     }
