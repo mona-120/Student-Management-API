@@ -37,6 +37,11 @@ namespace Student_Management_API.Services
             Course? course = await _appDbContext.Courses.FirstOrDefaultAsync(c => c.CourseId == id);
             if (course == null)
                 throw new Exception("Course not Exist!");
+
+            // Prevent Delete course with students as its delete type is Restrict
+            if (await _appDbContext.Enrollments.AnyAsync(e => e.CourseId == id))
+                throw new Exception($"Can't Delete course {course.Title}, It Contains Students!");
+
             _appDbContext.Courses.Remove(course);
             await _appDbContext.SaveChangesAsync();
             return course;

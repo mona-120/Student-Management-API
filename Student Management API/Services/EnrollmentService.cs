@@ -58,8 +58,8 @@ namespace Student_Management_API.Services
         // Get All Enrollments
         public async Task<List<Enrollment>> GetAllEnrollments()
         {
-            List<Enrollment> enrollments = await _appDbContext.Enrollments.AsNoTracking().ToListAsync();
-
+            var enrollments = await _appDbContext.Enrollments.Include(e=> e.Student)
+                                          .Include(e=>e.Course).AsNoTracking().ToListAsync();
             if (enrollments.Count == 0)
                 return [];
             return enrollments;
@@ -74,7 +74,7 @@ namespace Student_Management_API.Services
                 throw new Exception("Course Doesn't Exist!");
 
             List<Enrollment> enrollments = await _appDbContext.Enrollments.Where(e=> e.CourseId == courseId)
-                         .AsNoTracking().ToListAsync();
+                                            .Include(e=> e.Student).Include(e=> e.Course).AsNoTracking().ToListAsync();
 
             if (enrollments.Count == 0)
                 return [];
@@ -91,7 +91,8 @@ namespace Student_Management_API.Services
                 throw new Exception("Course Doesn't Exist!");
 
             Enrollment? enrollment = await _appDbContext.Enrollments.AsNoTracking()
-                .FirstOrDefaultAsync(e=> e.StudentId == studentId && e.CourseId == courseId);
+                                        .Include(e => e.Student).Include(e => e.Course)
+                                        .FirstOrDefaultAsync(e=> e.StudentId == studentId && e.CourseId == courseId);
             if (enrollment == null)
                 throw new Exception("Enrollment Doesn't Exist");
             return enrollment;
@@ -104,7 +105,8 @@ namespace Student_Management_API.Services
                 throw new Exception("Student Doesn't Exist!");
 
             List<Enrollment> enrollments = await _appDbContext.Enrollments.Where(e => e.StudentId == studentId)
-                                                         .AsNoTracking().ToListAsync();
+                                                     .Include(e => e.Student).Include(e => e.Course)
+                                                     .AsNoTracking().ToListAsync();
 
             if (enrollments.Count == 0)
                 return [];
