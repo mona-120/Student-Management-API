@@ -1,0 +1,41 @@
+@url = https://localhost:7162/api
+
+#Student Controller
+# Get Student Course
+GET {{url}}/students 
+###
+# Get Student with un Exist ID
+GET {{url}}/students/50
+
+###
+
+# Course Controller
+# Add new course
+Post {{url}}/courses
+content-type: application/json
+{
+  "title": "Backend",
+  "description": "Learn to build strong systems",
+  "credits": 120
+}
+
+###
+# Get Un Exist Course
+GET {{url}}/courses/50
+
+
+###
+# Enrollment Controller
+# Get enrollments
+GET {{url}}/enrollments
+
+###
+# Register existing student
+POST {{url}}/enrollments
+Content-Type: application/json
+{
+  "studentId": 1,
+  "courseId": 1,
+  "grade": null
+}
+

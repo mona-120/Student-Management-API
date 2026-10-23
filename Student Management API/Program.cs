@@ -34,7 +34,10 @@ namespace Student_Management_API
             //EnrollmentService
             builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 
+            builder.Services.AddProblemDetails();
+
             var app = builder.Build();
+            app.UseExceptionHandler();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -48,10 +51,9 @@ namespace Student_Management_API
 
             app.UseAuthorization();
 
+            app.UseMiddleware<RequestLoggingMiddleware>();
 
             app.MapControllers();
-
-            app.UseMiddleware<RequestLoggingMiddleware>();
 
             app.Run();
         }
