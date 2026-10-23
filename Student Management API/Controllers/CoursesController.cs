@@ -18,8 +18,15 @@ namespace Student_Management_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCourses()
         {
-            var courses = await _courseService.GetAllCourses();
-            return Ok(courses);
+            try
+            {
+                var courses = await _courseService.GetAllCourses();
+                return Ok(courses);
+            }
+            catch(Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id:int}")]

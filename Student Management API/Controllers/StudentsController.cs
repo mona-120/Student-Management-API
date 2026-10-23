@@ -18,9 +18,15 @@ namespace Student_Management_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllStudents()
         {
-            var students = await _studentService.GetAllStudents();
-           
-            return Ok(students);
+            try
+            {
+                var students = await _studentService.GetAllStudents();
+                return Ok(students);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id:int}")]
