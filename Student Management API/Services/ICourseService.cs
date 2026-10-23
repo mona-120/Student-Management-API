@@ -10,5 +10,7 @@ namespace Student_Management_API.Services
         Task<List<Course>> GetCourseByTitle(string title);
         Task<List<Course>> GetAllCourses();
         Task<Course> DeleteCourse(int id);
+        Task<List<StudentDto>> CourseDetails(int id);
+        Task<double?> AverageGrade(int id);
     }
 }

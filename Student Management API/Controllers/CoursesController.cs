@@ -32,7 +32,6 @@ namespace Student_Management_API.Controllers
             }
             catch (Exception ex)
             {
-               if(ex.Message == "Course not Exist!")
                     return NotFound(ex.Message);
             }
         }
@@ -47,7 +46,6 @@ namespace Student_Management_API.Controllers
             }
             catch(Exception ex)
             {
-                if (ex.Message == "Course Doesn't Exist")
                     return NotFound(ex.Message);
             }
         }
@@ -100,6 +98,34 @@ namespace Student_Management_API.Controllers
                 if (ex.Message == "Course Doesn't Exist!")
                     return NotFound(ex.Message);
                 return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet("{id:int}/students")]
+        public async Task<IActionResult> CourseDetails(int id)
+        {
+            try
+            {
+                var details = await _courseService.CourseDetails(id);
+                return Ok(details);
+            }
+            catch(Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("{id:int}/average-grade")]
+        public async Task<IActionResult> AverageGrade(int id)
+        {
+            try
+            {
+                var avg = await _courseService.AverageGrade(id);
+                return Ok(avg);
+            }
+            catch(Exception ex)
+            {
+                return NotFound(ex.Message);
             }
         }
     }

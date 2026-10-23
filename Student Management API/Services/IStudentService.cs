@@ -10,5 +10,6 @@ namespace Student_Management_API.Services
         Task<List<StudentResponse>> GetStudentByName(string name);
         Task<List<StudentResponse>> GetAllStudents();
         Task<StudentResponse> DeleteStudent(int id);
+        Task<List<CourseDto>> StudentInfo(int id);
     }
 }

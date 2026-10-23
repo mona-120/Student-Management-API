@@ -34,7 +34,6 @@ namespace Student_Management_API.Controllers
             }
             catch(Exception ex)
             {
-                if (ex.Message == "Course Doesn't Exist!")
                     return NotFound(ex.Message);
             }
         }
@@ -49,7 +48,6 @@ namespace Student_Management_API.Controllers
             }
             catch (Exception ex)
             {
-                if (ex.Message == "Student Doesn't Exist!")
                     return NotFound(ex.Message);
             }
         }
@@ -114,7 +112,6 @@ namespace Student_Management_API.Controllers
             }
             catch (Exception ex)
             {
-                if (ex.Message == "Enrollment Doesn't Exist")
                     return NotFound(ex.Message);
             }
         }

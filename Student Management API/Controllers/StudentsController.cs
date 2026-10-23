@@ -98,7 +98,21 @@ namespace Student_Management_API.Controllers
                 return NotFound(ex.Message);
             }
         }
-            
+
+
+        [HttpGet("{id:int}/courses")]
+        public async Task<IActionResult> GetStudentDetails(int id)
+        {
+            try
+            {
+                var details = await _studentService.StudentInfo(id);
+                return Ok(details);
+            }
+            catch(Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
 
     }
 }

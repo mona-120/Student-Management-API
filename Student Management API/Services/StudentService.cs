@@ -153,5 +153,24 @@ namespace Student_Management_API.Services
             return  response;
         }
 
+
+        // Get Student with Courses and grades
+        public async Task<List<CourseDto>> StudentInfo(int  id)
+        {
+            if (!(await db.Students.AnyAsync(s=> s.StudentId == id)))
+                throw new Exception("Student Doesn't Exist");
+
+            List<CourseDto> courses = await db.Enrollments.Where(s => s.StudentId == id)
+                .Select(e => new CourseDto
+                {
+                    CourseId = e.Course.CourseId,
+                    Title = e.Course.Title,
+                    Grade = e.Grade,
+                    EnrollmentDate = e.EnrollmentDate
+                }).AsNoTracking().ToListAsync();
+            
+            return courses;
+        }
+
     }
 }

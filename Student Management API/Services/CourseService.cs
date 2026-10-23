@@ -105,5 +105,35 @@ namespace Student_Management_API.Services
             await _appDbContext.SaveChangesAsync();
             return course;
         }
+
+
+        // Get Course Details
+        public async Task<List<StudentDto>> CourseDetails(int id)
+        {
+            if (!(await _appDbContext.Courses.AnyAsync(c => c.CourseId == id)))
+                throw new Exception("Course Doesn't Exist");
+            List<StudentDto> students = await _appDbContext.Enrollments.Where(c => c.CourseId == id)
+                .Select(e => new StudentDto
+                {
+                    StudentId = e.Student.StudentId,
+                    FullName = e.Student.FullName,
+                    Email = e.Student.Email,
+                    Grade = e.Grade,
+                    EnrollmentDate = e.EnrollmentDate,
+                }).AsNoTracking().ToListAsync();
+            return students;
+        }
+
+
+        // Get Course Average Grade
+        public async Task<double?> AverageGrade(int id)
+        {
+            if (!(await _appDbContext.Courses.AnyAsync(c => c.CourseId == id)))
+                throw new Exception("Course Doesn't Exist");
+
+            var avg = await _appDbContext.Enrollments.AsNoTracking().Where(e => e.Course.CourseId == id)
+                           .AverageAsync(e => e.Grade);
+            return avg; 
+        }
     }
 }
