@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Student_Management_API.Data;
+using Student_Management_API.Middlewares;
 using Student_Management_API.Services;
 
 namespace Student_Management_API
@@ -49,6 +50,8 @@ namespace Student_Management_API
 
 
             app.MapControllers();
+
+            app.UseMiddleware<RequestLoggingMiddleware>();
 
             app.Run();
         }
