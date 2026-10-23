@@ -1,0 +1,12 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Student_Management_API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CoursesController : ControllerBase
+    {
+
+    }
+}

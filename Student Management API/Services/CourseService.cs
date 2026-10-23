@@ -73,8 +73,9 @@ namespace Student_Management_API.Services
             if (string.IsNullOrWhiteSpace(title))
                 throw new Exception("Please Enter the Title!");
             List<Course> courses = await _appDbContext.Courses.Where(c=> c.Title.Contains(title)).AsNoTracking().ToListAsync();
+
             if (courses.Count == 0)
-                return [];
+                throw new Exception("Course Doesn't Exist");
             return courses;
         }
 

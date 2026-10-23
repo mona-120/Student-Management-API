@@ -60,8 +60,7 @@ namespace Student_Management_API.Services
         {
             var enrollments = await _appDbContext.Enrollments.Include(e=> e.Student)
                                           .Include(e=>e.Course).AsNoTracking().ToListAsync();
-            if (enrollments.Count == 0)
-                return [];
+    
             return enrollments;
         }
 
@@ -76,8 +75,6 @@ namespace Student_Management_API.Services
             List<Enrollment> enrollments = await _appDbContext.Enrollments.Where(e=> e.CourseId == courseId)
                                             .Include(e=> e.Student).Include(e=> e.Course).AsNoTracking().ToListAsync();
 
-            if (enrollments.Count == 0)
-                return [];
             return enrollments;
         }
 
@@ -108,8 +105,6 @@ namespace Student_Management_API.Services
                                                      .Include(e => e.Student).Include(e => e.Course)
                                                      .AsNoTracking().ToListAsync();
 
-            if (enrollments.Count == 0)
-                return [];
             return enrollments;
         }
 

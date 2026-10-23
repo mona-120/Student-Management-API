@@ -111,7 +111,7 @@ namespace Student_Management_API.Services
                 }).ToListAsync();
 
             if (responses.Count == 0)
-                return [];
+                throw new Exception("Student Doesn't Exist");
 
             return responses;
         }
@@ -129,9 +129,6 @@ namespace Student_Management_API.Services
                     DateOfBirth = response.DateOfBirth,
                     EnrollmentDate = response.EnrollmentDate
                 }).ToListAsync();
-
-            if (responses.Count == 0)
-                return [];
 
             return responses;
         }
